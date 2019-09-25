@@ -1,0 +1,8 @@
+{
+    "name": "altairBot",
+    "version": "1.0.0",
+    "description": "the better versionof TheDig3",
+    "main": "bot.js",
+    "author": "Yoza",
+    "dependencies": {}
+}
