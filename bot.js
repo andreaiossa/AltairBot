@@ -39,8 +39,6 @@ bot.on("message", function (user, userID, channelID, message, event) { // Messag
                 let result = Math.floor(Math.random() * (max - min + 1) + min);
                 bot.sendMessage({ to: channelID, message: "From " + min + " to " + max + ", you rolled: **" + result + "**" });
                 break;
-
-
             case "test":
                 bot.joinVoiceChannel("627164673049100353", function (error, events) {
                     if (error) return console.error(error);
