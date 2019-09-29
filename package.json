@@ -1,11 +1,25 @@
 {
-    "name": "altair-bot",
-    "version": "1.0.0",
-    "description": "the better versionof TheDig3",
-    "main": "bot.js",
-    "author": "Yoza",
-    "dependencies": {
-        "discord.io": "https://github.com/woor/discord.io/tarball/gateway_v6",
-        "winston": "^3.2.1"
-    }
+  "name": "altair-bot",
+  "version": "1.0.0",
+  "description": "the better versionof TheDig3",
+  "main": "bot.js",
+  "author": "Yoza",
+  "dependencies": {
+    "discord.io": "https://github.com/woor/discord.io/tarball/gateway_v6",
+    "discord.js": "^11.5.1",
+    "winston": "^3.2.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/andreaiossa/AltairBot.git"
+  },
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/andreaiossa/AltairBot/issues"
+  },
+  "homepage": "https://github.com/andreaiossa/AltairBot#readme"
 }

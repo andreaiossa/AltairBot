@@ -1,5 +1,8 @@
 const prefix = "!"; // Set bot prefix here
 
+const fs = require('fs');
+const stream = require('stream');
+const dis = require('discord.js');
 const auth = require("./auth.json"); // Load token
 const Discord = require("discord.io"); // Load discord.io
 const bot = new Discord.Client({ // Load bot
@@ -18,6 +21,7 @@ stdin.on("data", function (input) {
     }
 });
 
+
 bot.on("ready", function () { // When the bot comes online...
     console.log("I'm online!");
 });
@@ -35,10 +39,32 @@ bot.on("message", function (user, userID, channelID, message, event) { // Messag
                 let result = Math.floor(Math.random() * (max - min + 1) + min);
                 bot.sendMessage({ to: channelID, message: "From " + min + " to " + max + ", you rolled: **" + result + "**" });
                 break;
+
+
+            case "test":
+                bot.joinVoiceChannel("627164673049100353", function (error, events) {
+                    if (error) return console.error(error);
+
+                    bot.getAudioContext("627164673049100353", function (error, stream) {
+                        if (error) return console.error(error);
+
+                        fs.createReadStream('./audioFiles/scarso.mp3').pipe(stream);
+                        stream.on('done', function () {
+                            console.log("finito");
+                        });
+                    });
+                });
+
+
+
         }
     }
 });
 
+
 bot.on("disconnect", function () { // Occasionally the bot disconnects.
     bot.connect(); // Just reconnect when that happens.
 });
+
+
+//Macintosh HD⁩/Utenti⁩/andrea⁩/Scrivania⁩ ▸ ⁨AltairBot⁩
