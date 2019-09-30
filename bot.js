@@ -1,16 +1,20 @@
 const prefix = "!"; // Set bot prefix here
 
+const test = require('./audioList');
 const fs = require('fs');
-const stream = require('stream');
-const dis = require('discord.js');
 const auth = require("./auth.json"); // Load token
 const Discord = require("discord.io"); // Load discord.io
+const stdin = process.stdin; // Use the terminal to run JS code
+
 const bot = new Discord.Client({ // Load bot
     token: auth.token,
     autorun: true
 });
 
-const stdin = process.stdin; // Use the terminal to run JS code
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 stdin.on("data", function (input) {
     input = input.toString();
     try { // Attempt to run input
@@ -21,43 +25,59 @@ stdin.on("data", function (input) {
     }
 });
 
-
+var audioList = [];
 bot.on("ready", function () { // When the bot comes online...
     console.log("I'm online!");
+    test.populate(audioList);
 });
 
-bot.on("message", function (user, userID, channelID, message, event) { // Message detected
-    if (message.startsWith(prefix)) { // Message starts with prefix
-        let command = message.slice(prefix.length).split(" "); // Split message into words
-        switch (command[0]) { // Execute code depending on first word
-            case "ping": // ping: reply "pong"
-                bot.sendMessage({ to: channelID, message: "Pong!" });
-                break;
-            case "roll": // roll: choose a random number
-                let max = parseInt(command[1]) || 100;
-                let min = 1;
-                let result = Math.floor(Math.random() * (max - min + 1) + min);
-                bot.sendMessage({ to: channelID, message: "From " + min + " to " + max + ", you rolled: **" + result + "**" });
-                break;
+var mutex = true;
+
+function sendAudio(index, stream) {
+    audioStream = fs.createReadStream(audioList[index]);
+    console.log("Now playing: " + audioList[index]);
+    audioStream.pipe(stream, { end: false });
+
+    //stream('done'), for some reasons, is called one time for every mp3 piped to the stream so it is exponential (??)
+    //there is a simple mutex to let one process at the time in. I'm trying to find another solution but for now it seems to work fine
+
+    stream.on('done', async function () {
+        if (mutex) {
+            mutex = false;
+            var time = test.getRandomInt(1000, 2000);
+            var indice = test.getRandomItem(audioList);
+            await sleep(time);
+
+            mutex = true;
+            sendAudio(indice, stream);
+        }
+    });
+}
+
+
+bot.on("message", function (user, userID, channelID, message, event) {
+    if (message.startsWith(prefix)) {
+        let command = message.slice(prefix.length).split(" ");
+        switch (command[0]) {
             case "test":
-                bot.joinVoiceChannel("627164673049100353", function (error, events) {
+                bot.joinVoiceChannel(command[1], async function (error, events) {
                     if (error) return console.error(error);
 
-                    bot.getAudioContext("627164673049100353", function (error, stream) {
+                    bot.getAudioContext(command[1], async function (error, stream) {
                         if (error) return console.error(error);
 
-                        fs.createReadStream('./audioFiles/scarso.mp3').pipe(stream);
-                        stream.on('done', function () {
-                            console.log("finito");
-                        });
+                        var time = test.getRandomInt(1000, 2000);
+                        var index = test.getRandomItem(audioList);
+                        await sleep(time);
+
+                        sendAudio(index, stream);
                     });
                 });
-
-
-
         }
     }
 });
+
+
 
 
 bot.on("disconnect", function () { // Occasionally the bot disconnects.
@@ -65,4 +85,3 @@ bot.on("disconnect", function () { // Occasionally the bot disconnects.
 });
 
 
-//Macintosh HD⁩/Utenti⁩/andrea⁩/Scrivania⁩ ▸ ⁨AltairBot⁩
