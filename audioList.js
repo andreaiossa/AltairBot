@@ -36,6 +36,33 @@ async function test(lista) {
     }
 }
 
+var mutex = true;
+function sendAudio(index, stream, audioList) {
+    audioStream = fs.createReadStream(audioList[index]);
+    console.log("Now playing: " + audioList[index]);
+    audioStream.pipe(stream, { end: false });
+
+    //stream('done'), for some reasons, is called one time for every mp3 piped to the stream so it is exponential (??)
+    //there is a simple mutex to let one process at the time in. I'm trying to find another solution but for now it seems to work fine
+
+    stream.on('done', async function () {
+        if (mutex) {
+            mutex = false;
+            var time = getRandomInt(2000, 4000);
+            var indice = getRandomItem(audioList);
+            await sleep(time);
+
+            mutex = true;
+            sendAudio(indice, stream, audioList);
+        }
+    });
+}
+
+function sendSaluto(stream) {
+    audioStream = fs.createReadStream("./audioFiles/CONFERENZAUBI.mp3");
+    audioStream.pipe(stream, { end: false });
+    console.log("ciao!");
+}
 
 
 module.exports = {
@@ -43,6 +70,8 @@ module.exports = {
     getRandomInt,
     getRandomItem,
     sleep,
+    sendAudio,
+    sendSaluto,
     test
 };
 
