@@ -1,7 +1,7 @@
 const prefix = "!"; // Set bot prefix here
 
-const test = require('./audioList');
 const fs = require('fs');
+const test = require('./audioList'); s
 const auth = require("./auth.json"); // Load token
 const Discord = require("discord.io"); // Load discord.io
 const stdin = process.stdin; // Use the terminal to run JS code
